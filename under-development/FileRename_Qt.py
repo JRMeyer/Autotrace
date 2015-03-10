@@ -25,6 +25,7 @@ if a trace file...
 
 
 import sys
+import os
 from PyQt4 import QtGui, QtCore
 
 
@@ -36,10 +37,10 @@ class Renamer(QtGui.QWidget):
     def initUI(self):
         selectFiles = QtGui.QLabel('Select Files:')                             # initialize all widgets
         btnSource = QtGui.QPushButton('Open')
-        selectFilesEdit = QtGui.QLineEdit()
+        self.selectFilesEdit = QtGui.QLineEdit()
         saveTo = QtGui.QLabel('Save To:')
         btnDest = QtGui.QPushButton('Open')
-        saveToEdit = QtGui.QLineEdit()
+        self.saveToEdit = QtGui.QLineEdit()
         studyCode = QtGui.QLabel('Study Code:')
         studyCodeEdit = QtGui.QLineEdit()   
         subNum = QtGui.QLabel('Subject Number:')
@@ -53,13 +54,13 @@ class Renamer(QtGui.QWidget):
 
         grid.addWidget(selectFiles, 1, 0)
         grid.addWidget(btnSource, 1, 2)
-        grid.addWidget(selectFilesEdit, 2, 0, 1, -1)
+        grid.addWidget(self.selectFilesEdit, 2, 0, 1, -1)
         QtCore.QObject.connect(btnSource, QtCore.SIGNAL("clicked()"), 
                                self.choose_source)
         
         grid.addWidget(saveTo, 3, 0)
         grid.addWidget(btnDest, 3, 2)
-        grid.addWidget(saveToEdit, 4, 0, 1, -1)
+        grid.addWidget(self.saveToEdit, 4, 0, 1, -1)
         QtCore.QObject.connect(btnDest, QtCore.SIGNAL("clicked()"), 
                                self.choose_dest)
 
@@ -83,13 +84,13 @@ class Renamer(QtGui.QWidget):
         self.show()
    
     def choose_source(self):
-        fileName = QtGui.QFileDialog.getOpenFileNames(self, "Open File(s)")
-        for file in fileName:
-            print file
+        fileNames = QtGui.QFileDialog.getOpenFileNames(self, "Open File(s)")
+        self.selectFilesEdit.setText(os.path.dirname(str(fileNames[0])))
 
     def choose_dest(self):
-        fileName = QtGui.QFileDialog.getOpenFileNames(self, "Save To")
-          
+        dirName = QtGui.QFileDialog.getExistingDirectory(self, "Save To")
+        self.saveToEdit.setText(str(dirName))
+
      
 def main():
     
@@ -100,48 +101,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-        
-    # def onOK(self, event):
-    #     studycode = self.studycodeentry.get_text() 
-    #     subjnum = self.subjnumentry.get_text() 
-    #     item = self.tracerentry.get_text() if self.tracerentry.get_text() else "??"
-    #     tracer = self.tracerentry.get_text()
-    #     logfile = open(self.dstpath+'log.txt', 'w')
-    #     for i in self.srcfilelist:
-    #         shortname = os.path.basename(i)
-    #         image_extension = re.search(image_extension_pattern, i).group(1)
-    #         extension = "traced.txt" if "traced.txt" in shortname else image_extension
-    #         print "shortname: {0}\textension: {1}".format(shortname, extension) #debug
-    #         itemname = shortname.split('_')[2] if (shortname.count("_") >= 3) else item
-    #         framenumber = re.search(frame_number_pattern, shortname).group(1)
-    #         #make basic filename and image name...
-    #         print "studycode: {0}".format(studycode) #debug
-    #         print "subjnum: {0}".format(subjnum) #debug
-    #         print "itemname: {0}".format(itemname) #debug
-    #         print "framenumber: {0}".format(framenumber) #debug
-    #         f_basename = str(studycode) + "_" + str(subjnum) + "_" + itemname + "_" + framenumber
-    #         image_name = f_basename + image_extension
-    #         #see if this is a trace file...
-    #         if extension == "traced.txt":
-    #             #if tracer isn't specified, find appropriate tracer...
-    #             tracer = self.tracerentry.get_text() if self.tracerentry.get_text() else re.search(tracer_pattern, shortname).group(1).upper()
-    #             traced = '.' + tracer + '.' + extension
-    #         else:
-    #             traced = ""
-    #         #make new file name...
-    #         dstname = self.dstpath + image_name + traced
-    #         print 'renaming', i, '->', dstname 
-    #         logfile.write('%s -> %s\n' %(i, dstname))
-    #         cmd = ['cp', i, dstname]
-    #         p = subprocess.Popen(cmd)
-    #         p.wait()
-    #     logfile.close()
-    #     print "log file saved to", self.dstpath+'log.txt'
-    #     print "done"
-    #     gtk.main_quit()
-
-# if __name__ == "__main__":
-#     main()    
