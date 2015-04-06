@@ -27,8 +27,8 @@ from matplotlib import cm
 class NeutralTongue():
 	
 	def __init__(self):
-		'''center points determined by transforming the point (426, 393) several times
-		   with peterotron, and taking the average.
+		'''center points determined by transforming the point (426, 393)
+		   several times with peterotron, and taking the average.
 		'''
 		self.centerX = 665	                                 	# these come from hand tuning to find the smallest
 		self.centerY = 525                                              # range of y values of polar mags
@@ -137,7 +137,7 @@ class NeutralTongue():
 		fig = p.figure()
 		ax = Axes3D(fig)
 		ax.plot_surface(z1, -x1, -y1, rstride=1, cstride=1, cmap=cm.jet)
-		ax.view_init(90,-90)
+                ax.view_init(elev=25., azim=45.)
 		p.show()
 	
 	def NeutralLinguagram(self, M, savename, start=1):
@@ -161,7 +161,7 @@ class NeutralTongue():
 		fig = p.figure()
 		ax = Axes3D(fig)
 		ax.plot_surface(z1, -x1, y1, rstride=1, cstride=1, cmap=cm.jet)
-		ax.view_init(90,-90)
+                ax.view_init(elev=25., azim=45.)
 		p.suptitle(savename[:-4])
 		p.show()
 		
@@ -183,8 +183,8 @@ def demo(contours, neutral):
 	X, Y = t.loadContours(contours)
 	M = t.batchConvert2Polar(X, Y)
 	D = t.batchGetMinD(M, cmags)
-	#start = t.getFrame('filenames.txt', contours[:-4])
-	#t.linguagram(X, Y)
+	# start = t.getFrame('filenames.txt', contours[:-4])
+	t.linguagram(X, Y)
 	savename = contours[:-4] + '.png'
 	#t.NeutralLinguagram(D, savename, start)
 	t.NeutralLinguagram(D, savename)	
@@ -229,8 +229,7 @@ def analyze(files, results):
 		D = t.batchGetMinD(M, cmags)
 		start = t.getFrame('filenames.txt', contours[:-4])
 		
-		#show the neutral linguagram to get backNum and tipNum
-		savename = contours[:-4] + '.png'
+		savename = contours[:-4] + '.png'	                	# show neutral linguagram to get backNum and tipNum
 		print savename
 		t.NeutralLinguagram(D, savename, start)
 		#backNum = int(raw_input("Back Row -> "))
@@ -238,13 +237,11 @@ def analyze(files, results):
 		backNum = 7
 		tipNum = 23
 		
-		#show the TvB plot to determine l boundaries
-		back, tip = plotTvB(contours, backNum, tipNum)
+		back, tip = plotTvB(contours, backNum, tipNum) 		        # show the TvB plot to determine l boundaries
 		lstart = int(raw_input("L start -> "))
 		lend = int(raw_input("L end -> "))
 		
-		#find the lag
-		lt = tip[lstart-start:lend-start+1]
+		lt = tip[lstart-start:lend-start+1]                 		# find the lag
 		maxt = -1000
 		indt = -1
 		for j in range(len(lt)):

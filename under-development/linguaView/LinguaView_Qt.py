@@ -7,7 +7,7 @@
 import os
 import sys
 from PyQt4 import QtGui, QtCore
-# import neutralContour as nc
+import neutralContourSimple as nc
 # import LabelWindow as lw
 # import AnalysisWindow as aw
 
@@ -23,27 +23,32 @@ class MainWindow(QtGui.QMainWindow):
 
         imgDir = 'imgDir/'
 
-        exitAction = QtGui.QAction(QtGui.QIcon(imgDir + 'open_file.svg'), 'Open', self)
+        exitAction = QtGui.QAction(QtGui.QIcon(imgDir + 'open_file.svg'), 
+                                   'Open', self)
         exitAction.setShortcut('Ctrl+O')
         exitAction.setStatusTip('Open File(s)')
         exitAction.triggered.connect(center.select_files)
 
-        openAction = QtGui.QAction(QtGui.QIcon(imgDir + 'exit.svg'), 'Exit', self)
+        openAction = QtGui.QAction(QtGui.QIcon(imgDir + 'exit.svg'), 
+                                   'Exit', self)
         openAction.setShortcut('Ctrl+Q')
         openAction.setStatusTip('Exit application')
         openAction.triggered.connect(self.close)
 
-        vizAction = QtGui.QAction(QtGui.QIcon(imgDir + 'mag_glass.svg'), 'MAG', self)
+        vizAction = QtGui.QAction(QtGui.QIcon(imgDir + 'mag_glass.svg'), 
+                                  'MAG', self)
         vizAction.setShortcut('Ctrl+Q')
         vizAction.setStatusTip('MAG')
         vizAction.triggered.connect(self.close)
 
-        editAction = QtGui.QAction(QtGui.QIcon(imgDir + 'pencil.svg'), 'PEN', self)
+        editAction = QtGui.QAction(QtGui.QIcon(imgDir + 'pencil.svg'),
+                                   'PEN', self)
         editAction.setShortcut('Ctrl+Q')
         editAction.setStatusTip('PEN')
         editAction.triggered.connect(self.close)
 
-        runAction = QtGui.QAction(QtGui.QIcon(imgDir + 'gears.svg'), 'GEAR', self)
+        runAction = QtGui.QAction(QtGui.QIcon(imgDir + 'gears.svg'),
+                                  'GEAR', self)
         runAction.setShortcut('Ctrl+Q')
         runAction.setStatusTip('GEAR')
         runAction.triggered.connect(self.close)
@@ -80,17 +85,16 @@ class MainWidget(QtGui.QWidget):
     def initUI(self):
         labelSelectFiles = QtGui.QLabel('Data Files:')
         self.editSelectFiles = QtGui.QTextEdit()
-        radio = self.createNonExclusiveGroup()
+        btnGroup = self.createNonExclusiveGroup()
         btnViz = QtGui.QPushButton('Visualize')
 
         QtCore.QObject.connect(btnViz, QtCore.SIGNAL("clicked()"), 
-                               self.close)
-
+                               self.checkOutBoxes)
         grid = QtGui.QGridLayout()
 
         grid.addWidget(labelSelectFiles, 1, 0)
         grid.addWidget(self.editSelectFiles, 2, 0, 1, -1)
-        grid.addWidget(radio, 9,0)
+        grid.addWidget(btnGroup, 9,0)
         grid.addWidget(btnViz, 10, 0, 1, -1)
 
         self.setLayout(grid) 
@@ -107,16 +111,16 @@ class MainWidget(QtGui.QWidget):
         groupBox = QtGui.QGroupBox("Visualization Options")
         groupBox.setFlat(True)
 
-        checkBox1 = QtGui.QCheckBox("Linguagram")
-        checkBox2 = QtGui.QCheckBox("Neutral Contours")
-        checkBox3 = QtGui.QCheckBox("Waveform")
-        checkBox4 = QtGui.QCheckBox("Spectragram")
+        self.checkBox1 = QtGui.QCheckBox("Linguagram")
+        self.checkBox2 = QtGui.QCheckBox("Neutral Contours")
+        self.checkBox3 = QtGui.QCheckBox("Waveform")
+        self.checkBox4 = QtGui.QCheckBox("Spectragram")
 
         box = QtGui.QGridLayout()
-        box.addWidget(checkBox1, 1,0)
-        box.addWidget(checkBox2, 1,1)
-        box.addWidget(checkBox3, 2,0)
-        box.addWidget(checkBox4, 2,1)
+        box.addWidget(self.checkBox1, 1,0)
+        box.addWidget(self.checkBox2, 1,1)
+        box.addWidget(self.checkBox3, 2,0)
+        box.addWidget(self.checkBox4, 2,1)
 
         box.setColumnStretch(0, 1)                                              # addStrech is nice for when window size changes
         box.setColumnStretch(1, 1)
@@ -124,6 +128,27 @@ class MainWidget(QtGui.QWidget):
         groupBox.setLayout(box)
 
         return groupBox
+
+    def checkOutBoxes(self):
+        if self.checkBox1.isChecked():
+            i=0
+            for path in self.editSelectFiles.toPlainText().split('\n'):
+                i+=1
+                print i
+                if 'neutral' in str(path):
+                    neutral = path
+                    print neutral
+                else:
+                    contour = path
+                    print contour
+
+        if self.checkBox2.isChecked():
+            pass
+        if self.checkBox3.isChecked():
+            pass
+        if self.checkBox4.isChecked():
+            pass
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
