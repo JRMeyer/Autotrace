@@ -1,0 +1,43 @@
+import sys, math
+import pylab as p
+from numpy import *
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+
+fileName = sys.argv[1]
+
+class NeutralTongue():
+	
+	def __init__(self):
+		'''center points determined by transforming the point (426, 393) several times
+		   with peterotron, and taking the average.
+		'''
+		#self.centerX = 710
+		#self.centerY = 638
+		
+		# these come from hand tuning to find the smallest range of y values of polar mags
+		self.centerX = 665
+		self.centerY = 525
+	
+	def getNeutral(self, infile):
+		'''Finds the neutral tongue by averaging the values of the neutral tongue
+		   traces.
+		'''
+		f = open(infile, 'r').readlines()
+		
+		xaves = []
+		yaves = []
+		for i in range(1,33):
+			for j in range(i,len(f),32):
+				xs = []
+				ys = []
+				l = f[j][:-1].split('\t')
+				xs.append(eval(l[2]))
+				ys.append(eval(l[3]))
+			xaves.append(sum(xs)/len(xs))
+			yaves.append(sum(ys)/len(ys))
+		
+		return xaves, yaves
+	
+t = NeutralTongue()
+t.getNeutral(fileName)
