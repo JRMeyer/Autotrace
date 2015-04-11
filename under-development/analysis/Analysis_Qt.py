@@ -25,8 +25,8 @@ class MainWindow(QtGui.QMainWindow):
         openAction = QtGui.QAction('APIL Traces', self)
         openAction.triggered.connect(center.select_files)
 
-        openEdgeTrakAction = QtGui.QAction('EdgeTrak Traces', self)
-        openEdgeTrakAction.triggered.connect(center.importEdgeTrak)
+        convertEdgeTrakAction = QtGui.QAction('EdgeTrak --> APIL', self)
+        convertEdgeTrakAction.triggered.connect(center.convertEdgeTrak)
 
 
         exitAction = QtGui.QAction(QtGui.QIcon(imgDir + 'exit.svg'), 
@@ -64,7 +64,9 @@ class MainWindow(QtGui.QMainWindow):
         menubar = self.menuBar()
         importMenu = menubar.addMenu('&Open')
         importMenu.addAction(openAction)
-        importMenu.addAction(openEdgeTrakAction)
+
+        convertMenu = menubar.addMenu('&Convert')
+        convertMenu.addAction(convertEdgeTrakAction)
 
         exitMenu = menubar.addMenu('&Exit')
         exitMenu.addAction(exitAction)
@@ -115,7 +117,7 @@ class MainWidget(QtGui.QWidget):
         for fileName in fileNames:
             self.editSelectFiles.append(str(fileName))
 
-    def importEdgeTrak(self):
+    def convertEdgeTrak(self):
         folder = str(QtGui.QFileDialog.getExistingDirectory(self, 
                                "Select folder containing *.con file + images")) # make dialog and select dir
         converter = conv.Converter()
