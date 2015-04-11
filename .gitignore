@@ -1,6 +1,9 @@
 # Python 
 *.pyc
 
+# Emacs
+*~
+
 # Intellij
 .idea/
 *.iml
