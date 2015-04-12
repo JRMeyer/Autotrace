@@ -23,7 +23,10 @@ class MainWindow(QtGui.QMainWindow):
 
         imgDir = 'imgDir/'
 
-        openAction = QtGui.QAction('APIL Traces', self)
+        openAction = QtGui.QAction(QtGui.QIcon(imgDir + 'open_file.svg'), 
+                                   'APIL Traces', self)
+        openAction.setShortcut('Ctrl+O')
+        openAction.setStatusTip('Open File(s)')
         openAction.triggered.connect(center.select_files)
 
         convertEdgeTrakAction = QtGui.QAction('EdgeTrak --> APIL', self)
@@ -36,29 +39,12 @@ class MainWindow(QtGui.QMainWindow):
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
-        vizAction = QtGui.QAction(QtGui.QIcon(imgDir + 'mag_glass.svg'), 
-                                  'MAG', self)
-        vizAction.setShortcut('Ctrl+Q')
-        vizAction.setStatusTip('MAG')
-        vizAction.triggered.connect(self.close)
 
-        editAction = QtGui.QAction(QtGui.QIcon(imgDir + 'pencil.svg'),
-                                   'PEN', self)
-        editAction.setShortcut('Ctrl+Q')
-        editAction.setStatusTip('PEN')
-        editAction.triggered.connect(self.close)
-
-        runAction = QtGui.QAction(QtGui.QIcon(imgDir + 'gears.svg'),
-                                  'GEAR', self)
-        runAction.setShortcut('Ctrl+Q')
-        runAction.setStatusTip('GEAR')
-        runAction.triggered.connect(self.close)
 
         toolbar = self.addToolBar('Toolbar')
         toolbar.addAction(exitAction)
-        toolbar.addAction(vizAction)
-        toolbar.addAction(editAction)
-        toolbar.addAction(runAction)
+        toolbar.addAction(openAction)
+
         self.statusBar()
 
 
@@ -174,18 +160,29 @@ class MainWidget(QtGui.QWidget):
 
     def checkOutBoxes(self):
         if self.checkBox1.isChecked():
-            paths = self.editSelectFiles.toPlainText().split('\n')
-            wordList = self.traces_to_list(paths)
-            LG.LinguaGram().main(wordList)
+            try:
+                paths = self.editSelectFiles.toPlainText().split('\n')
+                wordList = self.traces_to_list(paths)
+                LG.LinguaGram().main(wordList)
+            except:
+                QtGui.QMessageBox.warning(self, 'ERROR', 
+                                "Make sure you have either:\n" +
+                                "(a) multiple individual trace files\n" +
+                                          "or (b) a single file of many traces\n"+
+                                          "in APIL format (not EdgeTrak)")
 
         if self.checkBox2.isChecked():                                          # this assumes the user only loads 2 files, both merg-
-            for path in self.editSelectFiles.toPlainText().split('\n'):         # ed sets of traces, one path containing 'neutral'
-                if 'neutral' in path:
-                    neutral = self.traces_to_list([path])
-                else:
-                    contours= self.traces_to_list([path])
-            NS.NeutralSubtraction(contours, neutral)
-
+            try:
+                for path in self.editSelectFiles.toPlainText().split('\n'):     # ed sets of traces, one path containing 'neutral'
+                    if 'neutral' in path:
+                        neutral = self.traces_to_list([path])
+                    else:
+                        contours= self.traces_to_list([path])
+                NS.NeutralSubtraction(contours, neutral)
+            except:
+                QtGui.QMessageBox.warning(self, 'ERROR', 
+                                "Make sure you have exactly 2 files loaded:\n" +
+                            "(1) neutral file and (1) contours file")
         if self.checkBox3.isChecked():
             pass
         if self.checkBox4.isChecked():
