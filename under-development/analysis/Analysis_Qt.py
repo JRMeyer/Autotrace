@@ -3,11 +3,11 @@
 
 """
 """
-
+import csv
 import os
 import sys
 from PyQt4 import QtGui, QtCore
-import neutralContourSimple as nc
+import linguaGram as LG
 import edgetrak_converter as conv
 
 class MainWindow(QtGui.QMainWindow):
@@ -147,16 +147,9 @@ class MainWidget(QtGui.QWidget):
 
     def checkOutBoxes(self):
         if self.checkBox1.isChecked():
-            i=0
-            for path in self.editSelectFiles.toPlainText().split('\n'):
-                i+=1
-                print i
-                if 'neutral' in str(path):
-                    neutral = path
-                    print neutral
-                else:
-                    contour = path
-                    print contour
+            paths = self.editSelectFiles.toPlainText().split('\n')
+            wordList = self.traces_to_list(paths)
+            LG.LinguaGram().main(wordList)
 
         if self.checkBox2.isChecked():
             pass
@@ -164,6 +157,32 @@ class MainWidget(QtGui.QWidget):
             pass
         if self.checkBox4.isChecked():
             pass
+
+
+    def traces_to_list(self,paths):
+        ''' 
+        input is either a dir of unmerged trace files or a single,
+        merged trace file
+        ''' 
+        wordList = []
+        if len(paths)==1:                                                       # if the user has only loaded one file to vizualize,
+            with open(paths[0]) as f:                                           # assume that file is a files of merged trace files
+                dialect = csv.Sniffer().sniff(f.read(1024))
+                f.seek(0)
+                r = csv.reader(f, dialect)
+                for row in r:
+                    wordList.append(row)
+
+        elif len(paths)>1:                                                      # if the user has loaded more than one file to vizual-
+            for path in paths:                                                  # ize, then assume that the files are each a trace of
+                with open(path) as f:                                           # a single frame
+                    dialect = csv.Sniffer().sniff(f.read(1024))
+                    f.seek(0)
+                    r = csv.reader(f, dialect)
+                    for row in r:
+                        wordList.append([path]+row)
+                    
+        return wordList
 
 
 def main():

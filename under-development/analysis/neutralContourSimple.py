@@ -178,16 +178,17 @@ class NeutralTongue():
 
 def demo(contours, neutral):
 	t = NeutralTongue()
-	cx, cy = t.getNeutral(neutral)
-	cmags = t.makePolar(cx, cy)
+	# cx, cy = t.getNeutral(neutral)
+	# cmags = t.makePolar(cx, cy)
 	X, Y = t.loadContours(contours)
-	M = t.batchConvert2Polar(X, Y)
-	D = t.batchGetMinD(M, cmags)
+	# M = t.batchConvert2Polar(X, Y)
+	# D = t.batchGetMinD(M, cmags)
 	# start = t.getFrame('filenames.txt', contours[:-4])
 	t.linguagram(X, Y)
-	savename = contours[:-4] + '.png'
-	#t.NeutralLinguagram(D, savename, start)
-	t.NeutralLinguagram(D, savename)	
+	# savename = contours[:-4] + '.png'
+	# #t.NeutralLinguagram(D, savename, start)
+	# t.NeutralLinguagram(D, savename)
+	
 	
 
 def plotTvB(contours, backNum, tipNum, neutral='neutral.csv'):
