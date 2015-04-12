@@ -8,6 +8,7 @@ import os
 import sys
 from PyQt4 import QtGui, QtCore
 import linguaGram as LG
+import neutralSubtraction as NS
 import edgetrak_converter as conv
 
 class MainWindow(QtGui.QMainWindow):
@@ -128,7 +129,7 @@ class MainWidget(QtGui.QWidget):
         groupBox.setFlat(True)
 
         self.checkBox1 = QtGui.QCheckBox("Linguagram")
-        self.checkBox2 = QtGui.QCheckBox("Neutral Contours")
+        self.checkBox2 = QtGui.QCheckBox("Neutral Subtraction")
         self.checkBox3 = QtGui.QCheckBox("Waveform")
         self.checkBox4 = QtGui.QCheckBox("Spectragram")
 
@@ -144,19 +145,6 @@ class MainWidget(QtGui.QWidget):
         groupBox.setLayout(box)
 
         return groupBox
-
-    def checkOutBoxes(self):
-        if self.checkBox1.isChecked():
-            paths = self.editSelectFiles.toPlainText().split('\n')
-            wordList = self.traces_to_list(paths)
-            LG.LinguaGram().main(wordList)
-
-        if self.checkBox2.isChecked():
-            pass
-        if self.checkBox3.isChecked():
-            pass
-        if self.checkBox4.isChecked():
-            pass
 
 
     def traces_to_list(self,paths):
@@ -184,6 +172,24 @@ class MainWidget(QtGui.QWidget):
                     
         return wordList
 
+    def checkOutBoxes(self):
+        if self.checkBox1.isChecked():
+            paths = self.editSelectFiles.toPlainText().split('\n')
+            wordList = self.traces_to_list(paths)
+            LG.LinguaGram().main(wordList)
+
+        if self.checkBox2.isChecked():                                          # this assumes the user only loads 2 files, both merg-
+            for path in self.editSelectFiles.toPlainText().split('\n'):         # ed sets of traces, one path containing 'neutral'
+                if 'neutral' in path:
+                    neutral = self.traces_to_list([path])
+                else:
+                    contours= self.traces_to_list([path])
+            NS.NeutralSubtraction(contours, neutral)
+
+        if self.checkBox3.isChecked():
+            pass
+        if self.checkBox4.isChecked():
+            pass
 
 def main():
     app = QtGui.QApplication(sys.argv)
