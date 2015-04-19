@@ -146,7 +146,7 @@ options(memory=1000000000)
 ##### all of the code below into the R terminal and press enter.
 
 
-datalocation <- '/Users/apiladmin/Desktop/GaelicEpenthesisHC/GaelicS8/GaelicS8_SSANOVAfile3.txt'
+datalocation <- '/home/josh/Desktop/ssanova_ready_achlais.txt'
 
 mydata <- read.table(datalocation,h=T)
 
@@ -155,5 +155,5 @@ mydata <- read.table(datalocation,h=T)
 ##### of the Gaelic words in turn.  After you produce a graph, make sure to save it before 
 ##### producing the next one.
 
-compare("airgeadV1", "airgeadV2", mydata);  # Make sure to save the graph!
+compare("achlais_sf", "tulg_Vu2", mydata)  # Make sure to save the graph!
  
