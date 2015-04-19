@@ -1,6 +1,6 @@
 #  Created by Julia Fisher
 #  7/20/11
-#  Last modified:  7/20/11
+#  Last modified:  4/18/2015 by Josh Meyer
 
 #  Description:
 #  This program takes in a folder, reads systematically through the folder,
@@ -16,103 +16,107 @@
 #  These will be preceeded by NEW_.
 
 #  Example:
-#  Subject15
-#		airgead
-#			airgead1
-#				file1
-#				file2
-#			airgead2
-#				NEW_file1
-#				NEW_file2
-#			airgead3
-#				NEW_file1
-#				NEW_file2
-#		airm
-#			airm1
-#				file1
-#				file2
-#			airm2
-#				NEW_file1
-#				NEW_file2
+#  Subject15/
+#		airgead/
+#			airgead1/
+#				file1.txt
+#				file2.txt
+#			airgead2/
+#				NEW_file1.txt
+#				NEW_file2.txt
+#			airgead3/
+#				NEW_file1.txt
+#				NEW_file2.txt
+#		airm/
+#			airm1/
+#				file1.txt
+#				file2.txt
+#			airm2/
+#				NEW_file1.txt
+#				NEW_file2.txt
 
 import os
 
-def produce_SSANOVA_file(folderpath, outputpath):
+def produce_SSANOVA_file(mainDirPath, outFilePath):
     
-    WordFolders = os.listdir(folderpath)  # This opens the main folder.
+    wordDirs = os.listdir(mainDirPath)                                          # This opens the main folder.
 
-    # Create the output file that will be written to throughout the script.
-    # There is one outputfile per subject.  It outputs the data in the form
-    # needed by the SSANOVA script.
+                                                                                # Create the output file that will be written to 
+                                                                                # throughout the script. There is one outputfile per
+                                                                                # subject.  It outputs the data in the form needed by
+                                                                                # the SSANOVA script.
 
-    Output = open(outputpath, 'w')
-    Output.write('word\ttoken\tX\tY\n')  # This is the header line of the output file.
+    outFile = open(outFilePath, 'w')
+    outFile.write('word\ttoken\tX\tY\n')                                        # This is the header line of the output file.
     
-    #  Now, go through the main folder and find the needed .traced.txt files and write them appropriately
-    # to the output file.
-    for item in WordFolders:  # item is the name of the word.  It's 'word' in the output file.
-        wordfolder = folderpath + '/' + item
-        if os.path.isdir(wordfolder):
-            WordRepetitionFolders = os.listdir(wordfolder)
-            for thing in WordRepetitionFolders:
-                if os.path.isdir(wordfolder + '/' + thing):
-                    tokennum = ''  # The tokennum is the number after the word.  So, the folder airgead1
-                    i = 0          # would contain all tokens 1 of the two vowels.  Also, tokennum is token in the output.
-                    while i < len(thing):
-                        if thing[i].isalpha() == False:
-                            tokennum = tokennum + thing[i]
+                                                                                # Now, go through the main folder and find the needed
+                                                                                # .traced.txt files and write them appropriately
+                                                                                # to the output file.
+    for word in wordDirs:                                                       # the label of wordDir is the word itself
+                                                                                # AKA, what goes in the 'word' column of output file.
+        wordDir = mainDirPath + '/' + word
+        if os.path.isdir(wordDir):
+            wordRepDirs = os.listdir(wordDir)
+            for wordRepDir in wordRepDirs:
+                if os.path.isdir(wordDir + '/' + wordRepDir):
+                    tokenNum = ''                                               # The tokennum is the number after the word.
+                                                                                # So, the folder airgead1
+                    i = 0                                                       # would contain all tokens 1 of the two vowels.  
+                                                                                # Also, tokenNum is token in the output.
+                    while i < len(wordRepDir):
+                        if wordRepDir[i].isalpha() == False:                    # path doesn't consist only of alphabetic characters
+                            tokenNum = tokenNum + wordRepDir[i]
                             i += 1
                         else:
                             i += 1
-                    VowelTokens = os.listdir(wordfolder + '/' + thing)
-                    Vowels = []  # a list in which to hold V1 and V2
+                    vowelTokens = os.listdir(wordDir + '/' + wordRepDir)
+                    vowels = []                                                 # a list in which to hold V1 and V2
                     NEW = None
-                    for possiblevowel in VowelTokens:
-                        if 'C1' in possiblevowel or 'C2' in possiblevowel:
+                    for fileName in vowelTokens:                                # where fileName is possibly a vowel
+                        if 'C1' in fileName or 'C2' in fileName:
                             pass
-                        elif 'NEW' in possiblevowel:
+                        elif 'NEW' in fileName:
                             NEW = 'Yes'
-                            Vowels.append(wordfolder + '/' + thing + '/' + possiblevowel)
-                    if Vowels == []:  # If Vowels is empty, then we're in rep. 1.  Just add the items in it to Vowels.  
-                        for possiblevowel in VowelTokens:
-                            Vowels.append(wordfolder + '/' + thing + '/' + possiblevowel)
+                            vowels.append(wordDir + '/' + wordRepDir + '/' + 
+                                          fileName)
+                    if vowels == []:                                            # If vowels is empty, then we're in rep. 1.  
+                                                                                # Just add the items in it to vowels.  
+                        for fileName in vowelTokens:
+                            vowels.append(wordDir + '/' + wordRepDir + '/' + 
+                                          fileName)
 
-                    if Vowels != []:  # This checks that the folder that should contain the two vowel tokens is not 
-                                      # empty. In other words, the vowel tokens were in fact there.
-                        # Now, check which of the two vowel files is the first (i.e. the lower number)
-                        vowela = Vowels[0].rsplit('_', 1)[1].split('.')[0] # These *should* be the frame numbers.
-                        #print vowela
-                        vowelb = Vowels[1].rsplit('_', 1)[1].split('.')[0] # This tells us which vowel is the first and which is the second.
-                        #print vowelb
+                    if vowels != []:                                            # if the vowel tokens were in fact there,
+                                                                                # check which of the two vowel files is the
+                                                                                # first (i.e. the lower number)
+                        vowela = vowels[0].rsplit('_', 1)[1].split('.')[0]      # These *should* be the frame numbers.
+                        vowelb = vowels[1].rsplit('_', 1)[1].split('.')[0]      # This tells us which vowel is the first and 
+                                                                                # which is the second.
 
                         if vowela < vowelb:
-                            V1 = Vowels[0]
-                            #print V1
-                            V2 = Vowels[1]
-                            #print V2
+                            V1 = vowels[0]
+                            V2 = vowels[1]
                         else:
-                            V1 = Vowels[1]
-                            V2 = Vowels[0]
+                            V1 = vowels[1]
+                            V2 = vowels[0]
 
-                        # Read through v1.  Get rid of the leftmost element in each line.
-                        # Also, get rid of -1 lines.  Then, write the data to the output file.
-                        v1 = open(V1, 'r').readlines()
-
+                        v1 = open(V1, 'r').readlines()                          # Read through v1
                         for line in v1:
                             data = line.split()
-                            if data[0] == '-1':
+                            if data[0] == '-1':                                 # get rid of -1 lines
                                 pass
                             else:
                                 if NEW == 'Yes':
-                                    one = str(round(float(data[1]))).split('.')[0] + '.00'
-                                    two = str(round(float(data[2]))).split('.')[0] + '.00'
+                                    one = (str(round(float(data[1]))
+                                           ).split('.')[0] + '.00')
+                                    two = (str(round(float(data[2]))
+                                           ).split('.')[0] + '.00')
                                 else:
                                     one = data[1]
                                     two = data[2]
-                                Output.write(item + 'V1\t' + tokennum + '\t' + one + '\t' + two + '\n')
+                                outFile.write(wordDir + 'V1\t' + tokenNum + 
+                                              '\t' + one + '\t' + two + '\n')
 
-                        # Now, do the same for v2.
-                        v2 = open(V2, 'r').readlines()
+                        v2 = open(V2, 'r').readlines()                          # Now, do the same for v2
 
                         for line in v2:
                             data = line.split()
@@ -120,18 +124,21 @@ def produce_SSANOVA_file(folderpath, outputpath):
                                 pass
                             else:
                                 if NEW == 'Yes':
-                                    one = str(round(float(data[1]))).split('.')[0] + '.00'
-                                    two = str(round(float(data[2]))).split('.')[0] + '.00'
+                                    one = (str(round(float(data[1]))
+                                           ).split('.')[0] + '.00')
+                                    two = (str(round(float(data[2]))
+                                           ).split('.')[0] + '.00')
                                 else:
                                     one = data[1]
                                     two = data[2]
-                                Output.write(item + 'V2\t' + tokennum + '\t' + one + '\t' + two + '\n')
+                                outFile.write(wordDir + 'V2\t' + tokenNum + 
+                                              '\t' + one + '\t' + two + '\n')
 
-    Output.close()
+    outFile.close()
 
 
-# This is where we call on the program.
-produce_SSANOVA_file('/Users/apiladmin/Desktop/GaelicEpenthesisHC/GaelicS8', '/Users/apiladmin/Desktop/GaelicEpenthesisHC/GaelicS8/GaelicS8_SSANOVAfile3.txt')
+produce_SSANOVA_file('/Users/apiladmin/Desktop/GaelicEpenthesisHC/GaelicS8', 
+'/Users/apiladmin/Desktop/GaelicEpenthesisHC/GaelicS8/GaelicS8_SSANOVAfile3.txt')
                                 
                                 
                             
