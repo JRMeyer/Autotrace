@@ -146,7 +146,7 @@ options(memory=1000000000)
 ##### all of the code below into the R terminal and press enter.
 
 
-datalocation <- '/home/josh/Desktop/ssanova_ready_achlais.txt'
+datalocation <- '/home/josh/git/Autotrace/under-development/analysis/ssanova/minimal_working_examples/ssanova_ready_achlais.txt'
 
 mydata <- read.table(datalocation,h=T)
 

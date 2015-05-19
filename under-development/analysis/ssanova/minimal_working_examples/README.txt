@@ -1,8 +1,8 @@
 Before you try to run a minimal working example of the SSANOVA.R script, you should know some things. 
 
-An SSANOVA (smoothing spline ANOVA) compares two curves to tell you if they are different or not. For our purposes, we are using the SSANOVA to tell if two tongue contours are different. That means that we are only ever comparing two tongue contours (each corresponding to a point in an articulation of a sound). These could be two vowels, two fricatives, to stop closures, whatever you want.
+An SSANOVA (smoothing spline ANOVA) compares two curves to tell you if they are different or not. For our purposes, we are using the SSANOVA to tell if two tongue contours are different. That means that we are only ever comparing two tongue contours (each corresponding to a point in an articulation of a sound). These could be two vowels, two fricatives, to stop closures, whatever you want. For more info, check out Davidson (2006) "Comparing tongue shapes from ultrasound imaging using smoothing spline analysis of variance."
 
-With that in mind, let's run an example. You should find in this same folder three example data files.
+With that in mind, let's run an example. You should find three example data files in this same folder.
 
     ssanova_ready_achlais.txt
     ssanova_ready_balach.txt

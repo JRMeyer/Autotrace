@@ -34,6 +34,9 @@
 #			airm2/
 #				NEW_file1.txt
 #				NEW_file2.txt
+#			airm3/
+#				NEW_file1.txt
+#				NEW_file2.txt
 
 import os
 
