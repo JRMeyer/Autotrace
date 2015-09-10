@@ -12,7 +12,9 @@ import neutralSubtraction as NS
 import edgetrak_converter as conv
 
 class MainWindow(QtGui.QMainWindow):
-    
+    '''
+    this is the main window which houses all others
+    '''
     def __init__(self):
         super(MainWindow, self).__init__()
         self.initUI()
@@ -21,8 +23,10 @@ class MainWindow(QtGui.QMainWindow):
         center = MainWidget()
         self.setCentralWidget(center)
 
+        # this is the dir where the icons for all the buttons are
         imgDir = 'imgDir/'
 
+        # set up all the basic functions and 
         openAction = QtGui.QAction(QtGui.QIcon(imgDir + 'open_file.svg'), 
                                    'APIL Traces', self)
         openAction.setShortcut('Ctrl+O')
@@ -32,21 +36,17 @@ class MainWindow(QtGui.QMainWindow):
         convertEdgeTrakAction = QtGui.QAction('EdgeTrak --> APIL', self)
         convertEdgeTrakAction.triggered.connect(center.convertEdgeTrak)
 
-
         exitAction = QtGui.QAction(QtGui.QIcon(imgDir + 'exit.svg'), 
                                    'Exit', self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.setStatusTip('Exit application')
         exitAction.triggered.connect(self.close)
 
-
-
         toolbar = self.addToolBar('Toolbar')
         toolbar.addAction(exitAction)
         toolbar.addAction(openAction)
 
         self.statusBar()
-
 
         menubar = self.menuBar()
         importMenu = menubar.addMenu('&Open')
@@ -83,7 +83,7 @@ class MainWidget(QtGui.QWidget):
     def initUI(self):
         labelSelectFiles = QtGui.QLabel('Data Files:')
         self.editSelectFiles = QtGui.QTextEdit()
-        btnGroup = self.createNonExclusiveGroup()
+        btnGroup = self.createExclusiveGroup()
         btnViz = QtGui.QPushButton('Visualize')
 
         QtCore.QObject.connect(btnViz, QtCore.SIGNAL("clicked()"), 
@@ -110,46 +110,52 @@ class MainWidget(QtGui.QWidget):
         converter = conv.Converter()
         converter.main(folder)
 
-    def createNonExclusiveGroup(self):
+    def createExclusiveGroup(self):
         groupBox = QtGui.QGroupBox("Visualization Options")
         groupBox.setFlat(True)
 
-        self.checkBox1 = QtGui.QCheckBox("Linguagram")
-        self.checkBox2 = QtGui.QCheckBox("Neutral Subtraction")
-        self.checkBox3 = QtGui.QCheckBox("Waveform")
-        self.checkBox4 = QtGui.QCheckBox("Spectragram")
-
+        self.checkBox1 = QtGui.QRadioButton("Linguagram")
+        self.checkBox2 = QtGui.QRadioButton("Neutral Subtraction")
+        self.checkBox3 = QtGui.QRadioButton("Waveform")
+        self.checkBox4 = QtGui.QRadioButton("Spectragram")
+        
         box = QtGui.QGridLayout()
         box.addWidget(self.checkBox1, 1,0)
         box.addWidget(self.checkBox2, 1,1)
         box.addWidget(self.checkBox3, 2,0)
         box.addWidget(self.checkBox4, 2,1)
 
-        box.setColumnStretch(0, 1)                                              # addStrech is nice for when window size changes
+        # addStrech is nice for when window size changes
+        box.setColumnStretch(0, 1)
         box.setColumnStretch(1, 1)
 
         groupBox.setLayout(box)
 
         return groupBox
+    
 
 
     def traces_to_list(self,paths):
         ''' 
-        input is either a dir of unmerged trace files or a single,
-        merged trace file
+        INPUT: 
+        a dir of unmerged trace files -or- a single merged trace file
         ''' 
         wordList = []
-        if len(paths)==1:                                                       # if the user has only loaded one file to vizualize,
-            with open(paths[0]) as f:                                           # assume that file is a files of merged trace files
+        # if the user has only loaded one file to vizualize,
+        if len(paths)==1:
+            # assume that file is a files of merged trace files
+            with open(paths[0]) as f:
                 dialect = csv.Sniffer().sniff(f.read(1024))
                 f.seek(0)
                 r = csv.reader(f, dialect)
                 for row in r:
                     wordList.append(row)
-
-        elif len(paths)>1:                                                      # if the user has loaded more than one file to vizual-
-            for path in paths:                                                  # ize, then assume that the files are each a trace of
-                with open(path) as f:                                           # a single frame
+                    
+        # if the user has loaded more than one file to vizualize,
+        # then assume that the files are each a trace of a single frame
+        elif len(paths)>1:
+            for path in paths:
+                with open(path) as f:
                     dialect = csv.Sniffer().sniff(f.read(1024))
                     f.seek(0)
                     r = csv.reader(f, dialect)
@@ -168,12 +174,14 @@ class MainWidget(QtGui.QWidget):
                 QtGui.QMessageBox.warning(self, 'ERROR', 
                                 "Make sure you have either:\n" +
                                 "(a) multiple individual trace files\n" +
-                                          "or (b) a single file of many traces\n"+
-                                          "in APIL format (not EdgeTrak)")
+                                "or (b) a single file of many traces\n"+
+                                "in APIL format (not EdgeTrak)")
 
-        if self.checkBox2.isChecked():                                          # this assumes the user only loads 2 files, both merg-
+        # this assumes the user loads 2 files, each file a merged set of traces,
+        # one path should contain the string 'neutral'
+        if self.checkBox2.isChecked():
             try:
-                for path in self.editSelectFiles.toPlainText().split('\n'):     # ed sets of traces, one path containing 'neutral'
+                for path in self.editSelectFiles.toPlainText().split('\n'):
                     if 'neutral' in path:
                         neutral = self.traces_to_list([path])
                     else:
